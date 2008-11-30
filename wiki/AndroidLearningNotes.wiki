@@ -1,4 +1,8 @@
 #labels android,activity,thread,process
+
+参考这里：http://sites.google.com/site/io/inside-the-android-application-framework
+
+
 =Android App=
 
  * An Android app is a combination of A/B/C/S.
@@ -83,3 +87,5 @@ Activity 可能不太适合实现IM client后台监听消息的功能
 =Threads= 
 
  * Android System避免生成过多的Thread。很多Activity的callback（onXXX）都是在该Activity所处的process的main thread调用的。用户应避免在onXXX里面写long run的code
+
+页顶的url里面对looper的介绍很重要。
