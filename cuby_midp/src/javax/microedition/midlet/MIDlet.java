@@ -215,7 +215,8 @@ public abstract class MIDlet {
      * such as timers or callbacks.
      */
     public final void resumeRequest() {
-	
+    	//on android platform, activities cannot request to go to foreground
+    	//maybe we could raise a notification icon in top bar 
     }
 
     /**
@@ -315,4 +316,18 @@ public abstract class MIDlet {
 	return 0;
     }
     
+    int getStatus(){
+    	return status;
+    }
+    
+    void setStatus(int stat){
+    	status = stat;
+    }
+    
+    private int status = LOADED; //TODO cuby and midlet app linked together. 
+    
+    static final int LOADED = 0;
+    static final int PAUSED = 1;
+    static final int ACTIVE = 2;
+    static final int DESTROYED = 3;    
 }
