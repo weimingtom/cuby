@@ -21,6 +21,11 @@ public class MIDletContainer extends Activity {
 
         // TODO check 1st start or restart or kill-regenerated
         //here suppose 1st start
+        if(null==savedInstanceState){
+
+        }else{
+        		
+        	}
         
         //option 1: TODO load midlet class from "jar"
         //create midlet classloader, load the class from "jar"
@@ -32,6 +37,10 @@ public class MIDletContainer extends Activity {
         //construct midlet, with option 2:
         midlet = new com.cuby.sample.HelloCubyMIDlet();
         midlet.setStatus(MIDlet.LOADED);
+
+
+		container = this;
+
         
     }
     
@@ -87,9 +96,22 @@ public class MIDletContainer extends Activity {
 		midlet.setStatus(MIDlet.DESTROYED);
     }    
     
+    public static MIDletContainer getMIDletContainerInstance(){
+    	return container;
+    }
+    
+    public MIDlet getMIDlet(){
+    	return midlet;
+    }
+    
     /**
     * the midlet in user space
     * current design is: 1 activity is mapping to 1 midlet  
      */
     private MIDlet midlet;
+    
+    /**
+     * container is singleton 
+     */
+    private static MIDletContainer container;
 }
