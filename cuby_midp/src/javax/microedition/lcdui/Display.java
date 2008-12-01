@@ -2,9 +2,9 @@
 package javax.microedition.lcdui;
 
 /* This is used to implement the communication between MIDlet and Display */
-import javax.microedition.midlet.MIDlet;
+import java.util.HashMap;
 
-import java.io.IOException;
+import javax.microedition.midlet.MIDlet;
 
 
 
@@ -340,8 +340,15 @@ public class Display {
     	if(m == null){
     		throw new NullPointerException("null parameter is given");
     	}
-            
-    	return null;
+    	
+    	if (m2d.containsKey(m)) {
+    		//not first time call getDisplay
+    		return (Display)m2d.get(m);
+    	}else{
+        	Display d = new Display(m);
+        	m2d.put(m,d);
+        	return d;
+    	}
     }
 
     /**
@@ -362,9 +369,15 @@ public class Display {
      * is not a valid color specifier
      */
     public int getColor(int colorSpecifier) {
-    
+    	switch(colorSpecifier){
+    	case COLOR_BACKGROUND:
+    		return android.graphics.Color.BLACK & 0x00FFFFFF; //TODO check
+
+    		
+    	default:
             throw new IllegalArgumentException();
-        }
+    	}
+    }
         
 
 
@@ -417,7 +430,7 @@ public class Display {
      * @return number of colors
      */
     public int numColors() {
-        return 0;
+        return (int)Math.pow(2, 32); //TODO check
     }
 
     /**
@@ -433,7 +446,7 @@ public class Display {
      * @return number of alpha levels supported
      */
     public int numAlphaLevels() {
-        return 0;
+        return 256;
     }
 
     /**
@@ -456,7 +469,7 @@ public class Display {
      * @see #setCurrent
      */
     public Displayable getCurrent() {
-    	return null;
+    	return current;
     }
 
     /**
@@ -577,9 +590,10 @@ public class Display {
      * @see #getCurrent
      */
     public void setCurrent(Displayable nextDisplayable) {
-      
+    	current = nextDisplayable;
     }
 
+   
     /**
      * Requests that this <code>Alert</code> be made current, and that
      * <code>nextDisplayable</code> be
@@ -619,8 +633,8 @@ public class Display {
         if (nextDisplayable instanceof Alert) {
             throw new IllegalArgumentException();
         }
-
-   
+        
+        //TODO
     }
 
     /**
@@ -903,15 +917,16 @@ public class Display {
     }
 
 
-
-
-    public static  int getScreenWidth0(){
-    	return 0;
+   
+    
+    Display(MIDlet m){
+    	
     }
+    
+    private Displayable current;
 
-    public static  int getScreenHeight0(){
-    	return 0;
-    }
+    
+    private static HashMap m2d = new HashMap(1); //usually 1 midlet and 1 display
     
 }
 
