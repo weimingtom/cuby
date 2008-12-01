@@ -18,7 +18,8 @@ public class HelloCubyMIDlet extends MIDlet {
 	protected void destroyApp(boolean unconditional)
 			throws MIDletStateChangeException {
 		// TODO Auto-generated method stub
-
+		System.out.println("HelloCubyMIDlet: destroyApp");
+		notifyDestroyed(); //WTK samples usually do this
 	}
 
 	/* (non-Javadoc)
@@ -26,18 +27,15 @@ public class HelloCubyMIDlet extends MIDlet {
 	 */
 	protected void pauseApp() {
 		// TODO Auto-generated method stub
-
+		System.out.println("HelloCubyMIDlet: pauseApp");
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.microedition.midlet.MIDlet#startApp()
 	 */
 	protected void startApp() throws MIDletStateChangeException {
-		//TODO implement Display and Alert
-		display = Display.getDisplay(this);
-		//display.setCurrent( new Alert("Hello Cuby MIDlet!") );
+		System.out.println("HelloCubyMIDlet: startApp");
 	}
 
-	private Display display;
 
 }
