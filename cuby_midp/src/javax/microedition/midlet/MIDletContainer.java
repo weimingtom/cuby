@@ -1,9 +1,11 @@
 package javax.microedition.midlet;
 
+import java.io.PrintStream;
+
 import android.app.Activity;
 import android.os.Bundle;
 
-//TODO class MIDletContainer have to be public
+//TODO class MIDletContainer should not be public
 //while MIDP spec does not allow public classes in javax.microedition.midlet package 
 public class MIDletContainer extends Activity {
     /** Called when the activity is first created. */
@@ -12,10 +14,25 @@ public class MIDletContainer extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main); //TODO remove this line
         
-        //sample code, at present, midlet developer 
-        //compile their midlet source code together with cuby source code
-        //no midlet loader concept is defined yet.
+        System.setErr(new PrintStream(new com.cuby.util.LogOutputStream(
+				"System.err")));
+        System.setOut(new PrintStream(new com.cuby.util.LogOutputStream(
+				"System.out"))); 
+
+        // TODO check 1st start or restart or kill-regenerated
+        //here suppose 1st start
+        
+        //option 1: TODO load midlet class from "jar"
+        //create midlet classloader, load the class from "jar"
+        
+        //option 2: link the midlet with cuby into one apk
+        //midlet developer compile their midlet source code together with cuby source code
+        //no midlet loader is needed.
+        
+        //construct midlet, with option 2:
         midlet = new com.cuby.sample.HelloCubyMIDlet();
+        midlet.setStatus(MIDlet.LOADED);
+        
     }
     
     @Override
@@ -31,11 +48,10 @@ public class MIDletContainer extends Activity {
     @Override
     protected void onResume(){
     	super.onResume();
-    	//sample code
         try {
-        	//startApp is called when midlet is started and resumed
-        	//so we put startApp callback in Activity.onResume()
+        	//startApp is mapped to onResume
 			midlet.startApp(); 
+			midlet.setStatus(MIDlet.ACTIVE);
 		} catch (MIDletStateChangeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,12 +61,9 @@ public class MIDletContainer extends Activity {
     @Override
     protected void onPause(){
     	super.onPause();
-    	//sample code
+    	//pauseApp is mapped to onPause
     	midlet.pauseApp();
-    	
-    	//TODO: once Activity.onPause() is called, 
-    	//android may kill MIDletContainerActivity process at any time
-    	//so we might have to find a way to call destroyApp(true) in that case
+    	midlet.setStatus(MIDlet.PAUSED);
     }
 
     @Override
@@ -61,13 +74,17 @@ public class MIDletContainer extends Activity {
     @Override
     protected void onDestroy(){
     	super.onDestroy();
-    	//sample code
+
     	try {
-			midlet.destroyApp(false);  //TODO maybe use true as parameter
+			midlet.destroyApp(true);//true: midlet must cleanup and quit.  
 		} catch (MIDletStateChangeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (RuntimeException rte){
+			rte.printStackTrace();//ignored, according to midp spec
 		}
+		
+		midlet.setStatus(MIDlet.DESTROYED);
     }    
     
     /**
