@@ -1,8 +1,10 @@
 
 package javax.microedition.lcdui;
 
-import java.util.TimerTask;
-import java.util.Timer;
+import java.util.Vector;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletContainer;
 
 /**
  * An object that has the capability of being placed on the display.  A 
@@ -55,7 +57,7 @@ public abstract class Displayable {
      * @param title the Displayable's title, or null for no title
      */
     Displayable(String title) {
-  
+    	this.title = title;
     }
 
 // ************************************************************
@@ -69,7 +71,7 @@ public abstract class Displayable {
      * @see #setTitle
      */
     public String getTitle() {
-    	return null;
+    	return title;
     }
 
     /**
@@ -95,7 +97,7 @@ public abstract class Displayable {
      * @see #getTitle
      */
     public void setTitle(String s) {
-     
+    	title = s;
     }
 
     /**
@@ -106,7 +108,7 @@ public abstract class Displayable {
      */
     public Ticker getTicker() {
        
-            return null;
+            return ticker;
         
     }
 
@@ -138,7 +140,7 @@ public abstract class Displayable {
      * @see #getTicker
      */
     public void setTicker(Ticker ticker) {
-     
+    	this.ticker = ticker;
     }
 
     /**
@@ -157,9 +159,21 @@ public abstract class Displayable {
      * <code>Displayable</code> is currently visible
      */
     public boolean isShown() {
+    	//check midlet is running
+    	MIDletContainer container = MIDletContainer.getMIDletContainerInstance();
+    	MIDlet midlet = container.getMIDlet();
+    	if (midlet == null){
+    		return false;
+    	}
+    	
+    	//check the current displayable
+    	if (this != Display.getDisplay(midlet).getCurrent()){
+    		return false;
+    	}
         
-            return false;
-        
+    	//TODO check system screens: sys menu, ime, etc
+    	
+    	return true;
     }
 
     /**
@@ -185,7 +199,7 @@ public abstract class Displayable {
             throw new NullPointerException();
         }
 
-      
+        cmds.add(cmd);
     }
 
     /**
@@ -203,7 +217,7 @@ public abstract class Displayable {
      * @param cmd the command to be removed
      */
     public void removeCommand(Command cmd) {
-     
+    	cmds.remove(cmd);
     }
 
     /**
@@ -216,7 +230,7 @@ public abstract class Displayable {
      * @param l the new listener, or <code>null</code>.
      */
     public void setCommandListener(CommandListener l) {
-      
+    	listener = l;
     }
 
     /**
@@ -304,7 +318,10 @@ public abstract class Displayable {
         // this method is intended to be overridden by the application
     }
 
+    private String title;
+    private Ticker ticker;
 
-
+    private CommandListener listener;
+    private Vector cmds = new Vector();
 } // Displayable
 
